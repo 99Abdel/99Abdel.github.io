@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Page</title>
+
+    <style>
+        .button {
+            background-color: darkred;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            border-radius: 10px;
+            border: none;
+        }
+
+        .button:hover {
+            background-color: goldenrod;
+        }
+
+        .button:active{
+            background-color: aquamarine;
+        }
+
+        .button1{
+            position: absolute;
+            top: 200px;
+            left: calc(50% - 20vmin);
+        }
+
+        .button2{
+            position: absolute;
+            top: 200px;
+            left: calc(50% - 5vmin);
+        }
+
+        .button3{
+            position: absolute;
+            top: 200px;
+            left: calc(50% + 10vmin);
+        }
+
+    </style>
+</head>
+
+<body style="background-color: lightyellow;">
+
+    <h1>Exercise 1</h1>
+    <h3 id="p1" style="text-align: center;">Hello!</h3>
+    <h3 id="p2" style="text-align: center;">Monday</h3>
+    <h3 id="p3" style="text-align: center;">January</h3>
+
+    <button class="button button1" onclick="change_text()" style="cursor: help;">Change Text</button>
+    <button class="button button2" onclick="change_day()">Change Day</button>
+    <button class="button button3" onclick="change_month()">Change Month</button>
+
+    <script>
+
+        // Exercise 1
+        function change_text() {
+            x = document.getElementById("p1");
+            if (x.innerHTML == "Hello!")
+                x.innerHTML = "Well done!";
+            else
+                x.innerHTML = "Hello!";
+        }
+
+        let day_index = 0;
+        let days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        function change_day() {
+            x = document.getElementById("p2");
+            day_index = (day_index + 1) % 7;
+            x.innerHTML = days_of_week[day_index];
+        }
+
+        // Exercise 2
+
+        let month_index = 0;
+        let months_of_year = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        function change_month() {
+            x = document.getElementById("p3");
+            month_index = (month_index + 1) % 12;
+            x.innerHTML = months_of_year[month_index];
+        }
+    </script>
+</body>
+
+
+</html>
