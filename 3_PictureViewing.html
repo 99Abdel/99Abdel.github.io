@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .button{
+            background-color: blanchedalmond;
+            color: darkgreen;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: none;
+            margin: 2px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <img id="img1" src="pictures/desert.jpg" width="300px" alt="image not found" onclick="show_next_picture()">
+    <h4 id="h1">desert</h4>
+
+    <div>
+        <button class="button button1" onclick="show_previous_picture()">Previous</button>
+        <button class="button button2" onclick="show_next_picture()">Next</button>
+        <button class="button button3" onclick="increase_size()" >Big Image</button>
+        <button class="button button3" onclick="reduce_size()" >Small Image</button>
+    </div>
+    
+    <script>
+        let index = 0;
+        let piuctures = ["pictures/desert.jpg", "pictures/img_car.jpg", "pictures/img_the_scream.jpg", "pictures/workplace.jpg"];
+
+        function show_next_picture(){
+            x = document.getElementById("img1");
+            index = (index + 1) % piuctures.length;
+            x.src = piuctures[index];
+            change_picture_text(x.src);
+        }
+
+        function show_previous_picture(){
+            x = document.getElementById("img1");
+            if(index == 0)
+                index = piuctures.length - 1;
+            else
+                index -= 1; 
+            x.src = piuctures[index];
+            change_picture_text(x.src);
+        }
+
+        function increase_size(){
+            x = document.getElementById("img1");
+            x.style.width = "500px";
+        }
+
+        function reduce_size(){
+            x = document.getElementById("img1");
+            x.style.width = "100px";
+        }
+
+        function change_picture_text(text){
+            textElement = document.getElementById("h1");
+            let splitted_string = text.split("/");
+            let last = splitted_string.length - 1;
+            textElement.innerHTML = splitted_string[last].split(".")[0];
+        }
+    </script>
+</body>
+</html>

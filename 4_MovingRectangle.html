@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="ISO-8859-1">
+
+    <title>MovingRectangle.html © Kari Laitinen</title>
+
+
+    <style type="text/css">
+        #centered_container {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            width: 800px;
+            height: 600px;
+            margin-left: -400px;
+
+            background-color: AliceBlue;
+            border: 1px solid LightSkyBlue;
+        }
+
+        #centered_ui_components {
+            text-align: center;
+            /* This centers the buttons etc. */
+            background-color: LightSkyBlue;
+            /* Somewhat darker than AliceBlue */
+        }
+
+        #centered_radio_buttons {
+            text-align: center;
+            background-color: aquamarine;
+        }
+
+        #moving_rectangle {
+            position: absolute;
+            width: 240px;
+            height: 200px;
+            left: 276px;
+            /* "container width" / 2 - "rectangle width" / 2 - "border width"
+                           800 / 2 - 240 / 2 - 4 */
+            top: 200px;
+            background-color: red;
+            border: 6px solid black;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        var rectangle_position_left = 276;
+        var rectangle_position_top = 200;
+
+        function left_button_clicked() {
+            rectangle_position_left -= 4;
+
+            rectangle_element = document.getElementById("moving_rectangle");
+
+            // Here we set style property named "left". The value being set
+            // is a string. Operator + converts the value of variable
+            // rectangle_position_left to a string and adds the string "px"
+            // to the string.
+            rectangle_element.style.left = rectangle_position_left + "px";
+
+            console.log("\n left " + rectangle_element.style.left);
+        }
+
+        function down_button_clicked() {
+            rectangle_position_top += 4;
+            rectangle_element = document.getElementById("moving_rectangle");
+            rectangle_element.style.top = rectangle_position_top + "px";
+        }
+
+        function up_button_clicked() {
+            rectangle_position_top -= 4;
+            rectangle_element = document.getElementById("moving_rectangle");
+            rectangle_element.style.top = rectangle_position_top + "px";
+        }
+
+        function right_button_clicked() {
+            rectangle_position_left += 4;
+            rectangle_element = document.getElementById("moving_rectangle");
+            rectangle_element.style.left = rectangle_position_left + "px";
+        }
+
+        function change_rectangle_color() {
+            // The color specifications in the following array
+            // must match the order of colors in the HTML <select> tag.
+            // Colors can be specified either with numerical values, or with
+            // strings that are listed, for example, in the following page
+            // http://www.w3schools.com/html/html_colornames.asp
+
+            var selectable_colors = ["Red", "Green", "Blue", "Yellow", "Magenta",
+                "rgb( 0, 255, 255 )",   // Color "Cyan"
+                "rgb( 255, 255, 255 )", // Color "White"
+                "Khaki", "Gray", "Olive", "LawnGreen"];
+
+            var color_index =
+                document.getElementById("color_selection_list").selectedIndex;
+
+            rectangle_element = document.getElementById("moving_rectangle");
+
+            rectangle_element.style.background = selectable_colors[color_index];
+        }
+
+        function reset_rectangle() {
+            let x = document.getElementById("moving_rectangle");
+            x.style.left = "276px";
+            x.style.top = "200px";
+            x.style.width = "240px";
+            x.style.height = "200px";
+            x.style.background = "red";
+            document.getElementById("color_selection_list").selectedIndex = 0;
+        }
+
+        function increase_rectangle() {
+            let x = document.getElementById("moving_rectangle");
+            x.style.width = "480px";
+            x.style.height = "400px";
+        }
+
+        function reduce_rectangle() {
+            let x = document.getElementById("moving_rectangle");
+            x.style.width = "160px";
+            x.style.height = "120px";
+        }
+
+        function change_border(thickness) {
+            let x = document.getElementById("moving_rectangle");
+            x.style.border = thickness + "px solid black";
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <div id="centered_container">
+
+        <div id="centered_ui_components">
+            <!-- With the <button> tag we can define buttons and specify the methods
+                  that will be called when the buttons are pressed. Buttons
+                  could alternatively be defined with the <input> tag.
+    
+                  In HTML we must write &lt; and &gt; in order to produce the
+                  characters < and >, i.e., 'less than' and 'greater than'. -->
+            <button onclick="reset_rectangle()">Reset</button>
+            <button onclick="increase_rectangle()">Larger</button>
+            <button onclick="reduce_rectangle()">Smaller</button>
+            <button onclick="left_button_clicked()"> &lt; </button>
+            <button onclick="down_button_clicked()"> Down </button>
+            <button onclick="up_button_clicked()"> Up </button>
+            <button onclick="right_button_clicked()"> &gt; </button>
+
+            <!-- With the <select> tag we create a drop-down list. The selectable
+                  options are defined with the <option> tag. The method 
+                  change_rectangle_color() will be called automatically when the user
+                  makes a selection. -->
+
+            <select id="color_selection_list" onchange="change_rectangle_color()">
+                <option selected="">Red</option>
+                <option>Green</option>
+                <option>Blue</option>
+                <option>Yellow</option>
+                <option>Magenta</option>
+                <option>Cyan</option>
+                <option>White</option>
+                <option>Khaki</option>
+                <option>Gray</option>
+                <option>Olive</option>
+                <option>Lawn green</option>
+            </select>
+
+        </div> <!-- end of centered_ui_components -->
+
+        <!-- The content of the following <div> is empty as its properties are
+               specified with a CSS definition. -->
+
+        <div id="moving_rectangle">
+        </div>
+
+        <div id="centered_radio_buttons">
+            <input type="radio" id="radio1" name="Border" value="small" onchange="change_border(2);">
+            <label for="radio1">Small Border</label>
+            <input type="radio" id="radio2" name="Border" value="Normal" onchange="change_border(6);">
+            <label for="radio2">Normal Border</label>
+            <input type="radio" id="radio3" name="Border" value="Big" onchange="change_border(10);">
+            <label for="radio3">Big Border</label>
+        </div>
+
+    </div> <!-- end of centered_container  -->
+
+
+
+</body>
+
+</html>

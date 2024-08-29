@@ -76,7 +76,7 @@
 
         function change_day() {
             x = document.getElementById("p2");
-            day_index = (day_index + 1) % 7;
+            day_index = (day_index + 1) % days_of_week.length;
             x.innerHTML = days_of_week[day_index];
         }
 
@@ -87,7 +87,7 @@
 
         function change_month() {
             x = document.getElementById("p3");
-            month_index = (month_index + 1) % 12;
+            month_index = (month_index + 1) % months_of_year.length;
             x.innerHTML = months_of_year[month_index];
         }
     </script>
