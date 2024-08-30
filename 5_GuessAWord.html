@@ -1,0 +1,220 @@
+<html>
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>GuessAWord.html © Kari Laitinen</title>
+    <!-- 
+       2014-01-16 This file was created for http://www.naturalprogramming.com/
+       2016-01-31 Last modification
+    
+       This page demonstrates how to
+          - create <button> elements with JavaScript
+          - handle several buttons with a single JavaScript function
+          - use the Array methods push() and join()
+    
+    -->
+
+    <style>
+        .centered {
+            text-align: center;
+            margin: 64px auto;
+            /* top and bottom margins are set, right and left margins are automatic */
+            font-family: monospace;
+            /* Characters will have equal widths. */
+        }
+
+
+        body {
+            background-color: WhiteSmoke;
+        }
+
+        /* An <h1> element will be used to show the letters of the secret word. */
+
+        h1 {
+            font-size: 2.8em;
+            /* 2.8 times the normal font size. */
+            letter-spacing: 4px;
+            /* a little more space between the letters. */
+        }
+
+        button {
+            width: 28px;
+            height: 36px;
+            font-size: 18px;
+            color: Blue;
+            /* text color on the button. */
+            background-color: YellowGreen;
+        }
+
+        button:hover
+
+        /* When the mouse cursor is hovering over the button ... */
+            {
+            opacity: 0.5;
+            /* ... the button background becomes somewhat transparent. */
+        }
+
+        button:disabled{
+            color: beige;
+            background-color: darkred;
+            opacity: 0.3;
+        }
+
+        button.correct:disabled{
+            color: beige;
+            background-color: lightgray;
+            opacity: 0.3;
+        }
+
+        #newGameButton{
+            background-color: darkred;
+            color: white;
+            padding: 10px 15px;
+            width: 150px;
+            text-align: center;
+            font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
+
+    <script>
+
+        let words_to_be_guessed = ["VIENNA", "HELSINKI", "COPENHAGEN", "LONDON", "BERLIN", "AMSTERDAM"];
+        let i, word_to_be_guessed, guessed_characters, number_of_guesses, string_counter, flag;
+
+        // After the following loop has been executed, the array of guessed
+        // characters will contain as many strings "-" as there are characters
+        // in the word to be guessed.
+
+        function initialize_game(){
+            document.getElementById("newGameButton").style.display = "none";
+            i = Math.floor(Math.random() * words_to_be_guessed.length);
+            word_to_be_guessed = words_to_be_guessed[i];
+            guessed_characters = [];
+            number_of_guesses = 0;
+            flag = true;
+            
+            // After the following loop has been executed, the array of guessed
+            // characters will contain as many strings "-" as there are characters
+            // in the word to be guessed.
+            for (string_counter = 0; string_counter < word_to_be_guessed.length; string_counter++) {
+                guessed_characters.push("-");
+            }
+            
+            document.getElementById("secret_word_text_id").innerHTML = guessed_characters.join("");
+            document.getElementById("number_of_guesses").innerHTML = number_of_guesses;
+            document.getElementById("EndMessage").style.visibility = "hidden";
+
+            let letter_buttons = document.getElementsByClassName("letter_button");
+            for(let i in letter_buttons){
+                letter_buttons[i].disabled = false;
+                letter_buttons[i].classList.remove("correct");
+            }
+        }
+
+       // Add event listener for keydown events
+        document.addEventListener('keydown', function(event) { 
+            let key = event.key.toUpperCase();
+            console.log(key);
+            let buttons = document.getElementById("LettersDiv").children
+            let index;
+            
+            for(let i = 1; i < buttons.length - 4; i++){
+                if(buttons[i].innerHTML == key){
+                    index = i;
+                }
+            }
+            handle_button_press(buttons[index]);
+        });
+
+        // The following JavaScript function is called when one of the buttons is
+        // pressed. A reference to the button object is received as a parameter.
+        // With the textContent attribute we can find out what is the text written
+        // on the button, i.e., we find out what letter was selected.
+        function handle_button_press(pressed_button) {
+            let selected_letter = pressed_button.textContent;
+            
+            let dashes = 0;
+            
+            for (character_index in guessed_characters) {
+                if (word_to_be_guessed.charAt(character_index) == selected_letter) {
+                    guessed_characters[character_index] = selected_letter;
+                    pressed_button.classList.add("correct");
+                }
+                else if( guessed_characters[character_index] == "-"){
+                    dashes++;
+                }
+            }
+
+            if(dashes > 0 && !pressed_button.disabled){
+                number_of_guesses++;
+            }
+            else if(dashes == 0){
+                if(flag){
+                    number_of_guesses++;
+                    flag = false;
+                }
+                document.getElementById("EndMessage").style.visibility = "visible";
+                document.getElementById("newGameButton").style.display = "inline";
+            }
+
+            pressed_button.disabled = true;
+            // The array containing the guessed characters will be converted
+            // to a string with the join() method. The empty string "" as a parameter
+            // specifies that nothing will be added between the strings.
+            document.getElementById("secret_word_text_id").innerHTML = guessed_characters.join("");
+            document.getElementById("number_of_guesses").innerHTML = number_of_guesses;
+        }
+
+    </script>
+
+</head>
+
+
+<body onload="initialize_game()">
+
+    <div class="centered">
+        <br>&nbsp; <!-- Make some extra space before anyting else. -->
+        <p>Each hyphen sign '-' below hides a letter of a word.</p>
+        <p>Try to find out the word by pressing the buttons!</p>
+        <p>Number of Guesses: <span id="number_of_guesses">0</span></p>
+    </div>
+
+    <h1 id="secret_word_text_id" class="centered">VIENNA</h1>
+
+    <div id="LettersDiv" class="centered">
+
+        <script>
+
+            // Here we have JavaScript code inside an HTML <div> element.
+            // This JavaScript code is executed at the place where it is located.
+            // This generates the buttons that contain letters as their texts.
+
+            var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+                'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'V', 'W',
+                'X', 'Y', 'Z'];
+
+            for (var letter_index = 0;
+                letter_index < letters.length;
+                letter_index++) {
+                document.write("<button class=\"letter_button\" onclick=\"handle_button_press( this )\">" + letters[letter_index] + "</button>");
+            }
+
+            document.getElementById("secret_word_text_id").innerHTML = guessed_characters.join("");
+
+
+
+        </script>
+
+        <h3 id="EndMessage">Congratulations!</h3>
+        <br>
+        <button id="newGameButton" onclick="initialize_game()">New Game</button>
+    </div>
+
+</body>
+
+</html>
