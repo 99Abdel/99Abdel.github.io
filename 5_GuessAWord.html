@@ -104,6 +104,8 @@
             for (string_counter = 0; string_counter < word_to_be_guessed.length; string_counter++) {
                 guessed_characters.push("-");
             }
+            j = Math.floor(Math.random() * word_to_be_guessed.length);
+            guessed_characters[j] = word_to_be_guessed[j];
             
             document.getElementById("secret_word_text_id").innerHTML = guessed_characters.join("");
             document.getElementById("number_of_guesses").innerHTML = number_of_guesses;

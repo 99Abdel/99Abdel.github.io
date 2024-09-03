@@ -1,0 +1,195 @@
+<html>
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>OlympicsAlternative.html © Kari Laitinen</title>
+    <!-- 
+       2017-01-24 This file was created for http://www.naturalprogramming.com/
+       2017-01-24 Last modification.
+    
+       An alternative version of page Olympics.html
+       
+       In this version
+         - all JavaScript is inside a single <script> element.
+         - buttons are made using JavaScript
+         - reacting to the pressing of a button is made simpler with
+           a new attribute in buttons.
+    -->
+
+    <style>
+        .centered {
+            text-align: center;
+            margin: 64px auto 32px;
+            /* top and bottom margins are set,
+                                       right and left margins are automatic */
+            font-family: monospace;
+            /* Characters will have equal widths. */
+        }
+
+        #area_for_buttons {
+            width: 660px;
+            text-align: center;
+            margin: 16px auto;
+            /* top and bottom margins are set,
+                                   right and left margins are automatic */
+        }
+
+        button {
+            margin: 4px;
+            /* This makes some space between the buttons. */
+            background-color: Lavender;
+        }
+    </style>
+
+    <script>
+
+        // Here we define a JavaScript class named Olympics.
+
+        class Olympics {
+            constructor(given_olympic_year,
+                given_olympic_city,
+                given_olympic_country) {
+                this.olympic_year = given_olympic_year;
+                this.olympic_city = given_olympic_city;
+                this.olympic_country = given_olympic_country;
+            }
+
+            // Next, we specify three member functions, or getters, for
+            // the class Olympics.
+
+            get_year() {
+                return this.olympic_year;
+            }
+
+            get_city() {
+                return this.olympic_city;
+            }
+
+            get_country() {
+                return this.olympic_country;
+            }
+        }
+
+        // The following is an initialized array that contains references
+        // to Olympics objects.
+
+        var olympics_list =
+            [
+                new Olympics(1896, "Athens", "Greece"),
+                new Olympics(1900, "Paris", "France"),
+                new Olympics(1904, "St. Louis", "U.S.A."),
+                new Olympics(1906, "Athens", "Greece"),
+                new Olympics(1908, "London", "Great Britain"),
+                new Olympics(1912, "Stockholm", "Sweden"),
+                new Olympics(1920, "Antwerp", "Belgium"),
+                new Olympics(1924, "Paris", "France"),
+                new Olympics(1928, "Amsterdam", "Netherlands"),
+                new Olympics(1932, "Los Angeles", "U.S.A."),
+                new Olympics(1936, "Berlin", "Germany"),
+                new Olympics(1948, "London", "Great Britain"),
+                new Olympics(1952, "Helsinki", "Finland"),
+                new Olympics(1956, "Melbourne", "Australia"),
+                new Olympics(1960, "Rome", "Italy"),
+                new Olympics(1964, "Tokyo", "Japan"),
+                new Olympics(1968, "Mexico City", "Mexico"),
+                new Olympics(1972, "Munich", "West Germany"),
+                new Olympics(1976, "Montreal", "Canada"),
+                new Olympics(1980, "Moscow", "Soviet Union"),
+                new Olympics(1984, "Los Angeles", "U.S.A."),
+                new Olympics(1988, "Seoul", "South Korea"),
+                new Olympics(1992, "Barcelona", "Spain"),
+                new Olympics(1996, "Atlanta", "U.S.A."),
+                new Olympics(2000, "Sydney", "Australia"),
+                new Olympics(2004, "Athens", "Greece"),
+                new Olympics(2008, "Beijing", "China"),
+                new Olympics(2012, "London", "Great Britain")
+            ];
+
+        var last_clicked_button = null;
+
+        function olympic_year_was_selected(pressed_button) {
+            var selected_olympics =
+                olympics_list[pressed_button.olympics_index];
+
+            document.getElementById("olympic_games_text").innerHTML =
+                "Olympic Games " + selected_olympics.get_year();
+
+            document.getElementById("city_and_country_text").innerHTML =
+                selected_olympics.get_city() + ", " +
+                selected_olympics.get_country();
+
+            // We'll change the color of the button that was clicked. The original
+            // color of the previously clicked button will be first reinstated.
+
+            if (last_clicked_button != null) {
+                last_clicked_button.style.background = "Lavender";
+            }
+
+            last_clicked_button = pressed_button;
+
+            last_clicked_button.style.background = "LightGreen";
+        }
+
+        function create_buttons() {
+            var div_for_buttons = document.getElementById("area_for_buttons");
+
+            var number_of_buttons_on_current_line = 0;
+
+            // We will create as many <Button> elements as there are Olympics
+            // objects in the array.
+
+            for (var olympics_index in olympics_list) {
+                var olympic_year = olympics_list[olympics_index].get_year();
+
+                var olympics_button = document.createElement("BUTTON");
+                var button_text = document.createTextNode("" + olympic_year);
+                olympics_button.appendChild(button_text);
+
+                olympics_button.setAttribute("onclick",
+                    "olympic_year_was_selected( this )");
+
+                // For each button object we add a new attribute olympics_index
+                // This attribute will be used in the function that reacts to the
+                // pressings of the buttons.
+
+                olympics_button.olympics_index = olympics_index;
+
+                div_for_buttons.appendChild(olympics_button);
+
+                number_of_buttons_on_current_line++;
+
+                if (number_of_buttons_on_current_line >= 6) {
+                    var line_break = document.createElement("BR");
+                    div_for_buttons.appendChild(line_break);
+                    number_of_buttons_on_current_line = 0;
+                }
+            }
+        }
+
+    </script>
+</head>
+
+<body onload="create_buttons()">
+
+    <div class="centered">
+
+        <p><img src="images/olympic_rings_without_rims.png" width="200"></p>
+
+        <!-- The following texts will be modified by the function
+               olympic_year_was_selected(). -->
+
+        <h1 id="olympic_games_text">Olympic Games 2012</h1>
+
+        <h1 id="city_and_country_text">London, Great Britain</h1>
+
+    </div>
+
+    <div id="area_for_buttons">
+        <!-- The content of this element will be made with the function
+               create_buttons(). -->
+
+    </div>
+
+</body>
+
+</html>
