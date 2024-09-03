@@ -26,7 +26,7 @@
             /* Characters will have equal widths. */
         }
 
-        #area_for_buttons {
+        #area_for_buttons, #area_for_winter_buttons{
             width: 660px;
             text-align: center;
             margin: 16px auto;
@@ -73,7 +73,7 @@
         // The following is an initialized array that contains references
         // to Olympics objects.
 
-        var olympics_list =
+        let olympics_list =
             [
                 new Olympics(1896, "Athens", "Greece"),
                 new Olympics(1900, "Paris", "France"),
@@ -102,21 +102,83 @@
                 new Olympics(2000, "Sydney", "Australia"),
                 new Olympics(2004, "Athens", "Greece"),
                 new Olympics(2008, "Beijing", "China"),
-                new Olympics(2012, "London", "Great Britain")
+                new Olympics(2012, "London", "Great Britain"),
+                new Olympics(2016, "Rio", "Brazil"),
+                new Olympics(2020, "Tokyo", "Japan"),
+                new Olympics(2024, "Paris", "France"),
+                new Olympics(2028, "Los Angeles", "U.S.A."),
+                new Olympics(2032, "Brisbanne", "Australia")
+            ];
+
+        let winter_olympics_list =
+            [
+                new Olympics(1924, "Chamonix", "France"),
+                new Olympics(1928, "St. Moritz", "Switzeland"),
+                new Olympics(1932, "Lake Placid", "U.S.A."),
+                new Olympics(1936, "Garmisch-Partenkirchen", "Germany"),
+                new Olympics(1948, "St. Moritz", "Switzeland"),
+                new Olympics(1952, "Oslo", "Norway"),
+                new Olympics(1956, "Cortina d'Ampezzo", "Italy"),
+                new Olympics(1960, "Squaw Valley", "U.S.A."),
+                new Olympics(1964, "Innsbruck", "Austria"),
+                new Olympics(1968, "Grenoble", "France"),
+                new Olympics(1972, "Sapporo", "Japan"),
+                new Olympics(1976, "Innsbruck", "Austria"),
+                new Olympics(1980, "Lake Placid", "U.S.A."),
+                new Olympics(1984, "Sarajevo", "Yugoslavia"),
+                new Olympics(1988, "Calgary", "Canada"),
+                new Olympics(1992, "Albertville", "France"),
+                new Olympics(1994, "Lillehammer", "Norway"),
+                new Olympics(1998, "Nangano", "Japan"),
+                new Olympics(2002, "Salt LAke City", "U.S.A."),
+                new Olympics(2006, "Turin", "Italy"),
+                new Olympics(2010, "Vancouver", "Canada"),
+                new Olympics(2014, "Sochi", "Russia"),
+                new Olympics(2018, "Pyeongchang", "South Korea"),
+                new Olympics(2022, "Beijing", "China"),
+                new Olympics(2026, "Milan Cortina d'Ampezzo", "Italy"),
+                new Olympics(2030, "French Alps", "France"),
+                new Olympics(2034, "Salt LAke City", "U.S.A.")
+            ];
+
+
+        let roman_numbers =
+            [
+                "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+                "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+                "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XVIII", "XXIX", "XXX",
+                "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XXXX"
             ];
 
         var last_clicked_button = null;
 
         function olympic_year_was_selected(pressed_button) {
-            var selected_olympics =
-                olympics_list[pressed_button.olympics_index];
 
-            document.getElementById("olympic_games_text").innerHTML =
-                "Olympic Games " + selected_olympics.get_year();
+            let season, selected_olympics, beginning_year;
 
-            document.getElementById("city_and_country_text").innerHTML =
-                selected_olympics.get_city() + ", " +
-                selected_olympics.get_country();
+            if (pressed_button.name == "Summer"){
+                season = "Summer";
+                selected_olympics = olympics_list[pressed_button.olympics_index];
+                beginning_year = olympics_list[0].get_year()
+            }
+            else{
+                season = "Winter";
+                selected_olympics = winter_olympics_list[pressed_button.olympics_index];
+                beginning_year = winter_olympics_list[0].get_year()
+            }
+
+            let olympic_year = selected_olympics.get_year();
+            let olympiad_index = Math.floor((olympic_year - beginning_year) / 4);
+
+
+            document.getElementById("olympic_games_text").innerHTML = season +
+                " Olympic Games " + olympic_year + ", " + roman_numbers[olympiad_index] + " Olympiad";
+
+            let elem = document.getElementById("city_and_country_text");
+            let url = "https://en.wikipedia.org/wiki/" + olympic_year + "_" + season + "_Olympics";
+
+            elem.innerHTML = selected_olympics.get_city() + ", " + selected_olympics.get_country();
+            elem.href = url;
 
             // We'll change the color of the button that was clicked. The original
             // color of the previously clicked button will be first reinstated.
@@ -131,20 +193,22 @@
         }
 
         function create_buttons() {
-            var div_for_buttons = document.getElementById("area_for_buttons");
+            let div_for_buttons = document.getElementById("area_for_buttons");
+            let div_for_winter_buttons = document.getElementById("area_for_winter_buttons");
 
-            var number_of_buttons_on_current_line = 0;
+            let number_of_buttons_on_current_line = 0;
 
             // We will create as many <Button> elements as there are Olympics
             // objects in the array.
 
             for (var olympics_index in olympics_list) {
-                var olympic_year = olympics_list[olympics_index].get_year();
 
+                var olympic_year = olympics_list[olympics_index].get_year();
                 var olympics_button = document.createElement("BUTTON");
                 var button_text = document.createTextNode("" + olympic_year);
                 olympics_button.appendChild(button_text);
 
+                olympics_button.name = "Summer";
                 olympics_button.setAttribute("onclick",
                     "olympic_year_was_selected( this )");
 
@@ -164,6 +228,36 @@
                     number_of_buttons_on_current_line = 0;
                 }
             }
+            
+            number_of_buttons_on_current_line = 0;
+
+            for (var olympics_index in winter_olympics_list) {
+
+                var olympic_year = winter_olympics_list[olympics_index].get_year();
+                var olympics_button = document.createElement("BUTTON");
+                var button_text = document.createTextNode("" + olympic_year);
+                olympics_button.appendChild(button_text);
+
+                olympics_button.name = "Winter";
+                olympics_button.setAttribute("onclick",
+                    "olympic_year_was_selected( this )");
+
+                // For each button object we add a new attribute olympics_index
+                // This attribute will be used in the function that reacts to the
+                // pressings of the buttons.
+
+                olympics_button.olympics_index = olympics_index;
+
+                div_for_winter_buttons.appendChild(olympics_button);
+
+                number_of_buttons_on_current_line++;
+
+                if (number_of_buttons_on_current_line >= 6) {
+                    var line_break = document.createElement("BR");
+                    div_for_winter_buttons.appendChild(line_break);
+                    number_of_buttons_on_current_line = 0;
+                }
+            }
         }
 
     </script>
@@ -178,9 +272,12 @@
         <!-- The following texts will be modified by the function
                olympic_year_was_selected(). -->
 
-        <h1 id="olympic_games_text">Olympic Games 2012</h1>
+        <h1 id="olympic_games_text">Summer Olympic Games 2012, XXX Olympiad</h1>
 
-        <h1 id="city_and_country_text">London, Great Britain</h1>
+        <h1>
+            <a id="city_and_country_text" href="https://en.wikipedia.org/wiki/2012_Summer_Olympics" target="_blank"
+                title="More info in Wikipedia">London, Great Britain</a>
+        </h1>
 
     </div>
 
@@ -188,6 +285,11 @@
         <!-- The content of this element will be made with the function
                create_buttons(). -->
 
+    </div>
+
+    <div id="area_for_winter_buttons">
+        <!-- The content of this element will be made with the function
+               create_buttons(). -->
     </div>
 
 </body>

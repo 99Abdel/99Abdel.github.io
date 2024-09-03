@@ -1,0 +1,361 @@
+<html><head>
+    <meta charset="ISO-8859-1">
+    <title>MonthCalendar.html © Kari Laitinen</title>
+    <!-- 
+       2016-02-02 File created for http://www.naturalprogramming.com/
+       2016-10-21 New JavaScript (ECMAScript 6) class in use.
+       2018-04-24 Grayish body.
+    
+       This page demonstrates:
+          - using standard and 'self-made' Date methods
+          - creating a <table> element with JavaScript
+          - styling the <table> with CSS definitions
+          - defining a JavaScript class named EnglishCalendar
+          - defining subclasses for a JavaScript class (in comments)
+    
+    -->
+    
+    <style>
+    
+    body
+    {
+        background: #EEEEEE;
+    }
+    
+    #calendar_area
+    {
+       width:  480px;
+    
+       margin:  128px auto;    /* top and bottom margins are set,
+                                  right and left margins are automatic */
+    }
+    
+    #relatively_positioned_buttons
+    {
+       width: 480px ;
+       position: relative ;
+       top: 36px ;
+       text-align: right ;
+    }
+    
+    button
+    {
+       width:  32px ;
+       height: 28px ;
+       font-size: 18px ;
+       color: Black ;     /* text color on the button. */
+       background-color: #DA7B06 ;
+    }
+    
+    button:hover       /* When the mouse cursor is hovering over the button ... */
+    {
+        color: Snow ;    /* ... the button text color changes. */
+    }
+    
+    
+    table
+    {
+       width:  100% ;    /* The table will fill the enclosing element. */
+    
+       table-layout: fixed ;  /* This makes equal column widths. */
+    
+       font-family: monospace ;  /* Characters will have equal widths. */
+       font-size: 150% ;
+    }
+    
+    caption
+    {
+       text-align: left ;
+       font-size: 150% ;
+       font-family: sans-serif ;
+       color: OrangeRed ;
+    }
+    
+    td, th   /* The <td> and <th> elements are the cells of a table. */
+    {
+       text-align: center ;
+       padding: 12px ;
+    }
+    
+    th
+    {
+       background-color: #DA7B06 ;
+    } 
+    
+    td
+    {
+       background-color: #F3B708 ;
+    } 
+    
+    /* The following definitions specify that when the mouse cursor is moved
+       over a <td> element in the table, the text color and background color
+       will change. However, this will not happen if the id of the
+       element is week_number. */
+    
+    td:not(#week_number):hover
+    {
+       color: OrangeRed ;
+       background-color: LightGray ;
+    }
+    
+    td#week_number  /* Week numbers in the table are shown with different color. */
+    {
+       color: Gray ;
+    }
+    
+    /* The JavaScript method that creates the calendar table automatically 
+       equips the <td> element that contains the current day with id=current_day. */
+    
+    td#current_day
+    {
+       background-color: LightGreen ;
+    }
+    
+    </style>
+    
+    <!-- Next we'll import a .js file that contains methods with
+         which it is possible to do interesting operations with Date objects. -->
+    
+    <script src="importables/DateMethodsMore.js"></script>
+    
+    <script>
+    
+    // Here we define a JavaScript class named EnglishCalendar.
+    
+    class EnglishCalendar
+    {
+       constructor( given_year, given_month )
+       {
+          // JavaScript 'classes' can have only a single constructor.
+          // Therefore we must inspect how many parameters were given.
+    
+          if ( given_year === undefined )
+          {
+             // The constructor was called without any parameters.
+             // We'll be using the current year and month.
+    
+             var current_date = new Date() ;
+    
+             this.year  = current_date.getFullYear() ;
+             this.month = current_date.getMonth() + 1 ;
+          }
+          else if ( given_month === undefined )
+          {
+             console.log( "\n Bad parameters for EnglishCalendar constructor." ) ;
+          }
+          else
+          {
+             // the objects was created like = new EnglishCalendar( 2016, 2 ) ;
+    
+             this.year  = given_year ;
+             this.month = given_month ;
+          }
+    
+          var english_names_of_months  =  
+    
+                [ "January", "February", "March", "April",
+                  "May", "June", "July", "August",
+                  "September", "October", "November", "December" ] ;
+    
+          var english_week_description  =
+    
+                [ "Wk", "Mon", "Tue",  "Wed",  "Thu",  "Fri",  "Sat",  "Sun" ] ;
+    
+          this.names_of_months = english_names_of_months ;
+          this.week_description = english_week_description ;
+       }
+    
+       // Next we specify some methods for the class EnglishCalendar.
+    
+       get_year()
+       {
+          return this.year ;
+       }
+    
+       get_month()
+       {
+          return this.month ;
+       }
+    
+       increment_month()
+       {
+          this.month ++ ;
+    
+          if ( this.month > 12 )
+          {
+             this.month = 1 ;
+             this.year ++ ;
+          }
+       }
+    
+       decrement_month()
+       {
+          this.month -- ;
+    
+          if ( this.month < 1 )
+          {
+             this.month = 12 ;
+             this.year -- ;
+          }
+       }
+    
+       increment_year()
+       {
+          this.year ++ ;
+       }
+    
+       decrement_year()
+       {
+          this.year -- ;
+       }
+    
+       to_table_element()
+       {
+          var a_day_in_this_month  = new Date( this.year, this.month - 1, 1 ) ;
+    
+          // Days of week are indexed from 0 to 6. The first day of week is Monday.
+    
+          var day_of_week_index = 0 ;
+    
+          var day_of_week_of_first_day  =  a_day_in_this_month.index_for_day_of_week() ;
+    
+          var table_element = "<table id=calendar_as_table><caption>" +
+                              this.names_of_months[ this.month - 1 ] +
+                              "  "  +  this.year  +  "</caption><tr>" ;
+    
+          for ( var string_index in this.week_description )
+          {
+             table_element += "<th>" + this.week_description[ string_index ] + "</th>" ;
+          }
+    
+          table_element += "</tr><tr>" ;
+    
+          table_element += "<td id=week_number>" +
+                           a_day_in_this_month.get_week_number() + "</td>" ;
+    
+          // The first week of a month is often an incomplete week, 
+          // i.e., the first part of week belongs to the previous
+          // month. In place of the days that belong to the previous
+          // month we put cells with a space character.
+    
+          while ( day_of_week_index != day_of_week_of_first_day )
+          {
+             table_element +=  "<td id=day_of_previous_month>&nbsp;</td>"  ;
+             day_of_week_index  ++ ;
+          }
+    
+          var current_computer_date = new Date() ;
+    
+          while ( this.month  ==  a_day_in_this_month.getMonth() + 1 )
+          {
+             if ( day_of_week_index  >=  7 )
+             {
+                table_element += "</tr><tr><td id=week_number>"
+                                 + a_day_in_this_month.get_week_number() + "</td>" ;
+    
+                day_of_week_index  =  0 ;
+             }
+    
+             var day_to_calendar = a_day_in_this_month.getDate() ;
+    
+             if ( this.year  == current_computer_date.getFullYear() &&
+                  this.month == current_computer_date.getMonth() + 1 &&
+                  day_to_calendar == current_computer_date.getDate() )
+             {
+                table_element +=
+                       "<td id=current_day onclick=\"calendar_day_clicked( this )\">"
+                       + day_to_calendar + "</td>" ;
+             }
+             else
+             {
+                table_element += "<td onclick=\"calendar_day_clicked( this )\">"
+                                 + day_to_calendar + "</td>" ;
+             }
+    
+             a_day_in_this_month.plus_one_day() ;
+    
+             day_of_week_index  ++  ;
+          }
+    
+          // Let's put some empty cells to the last row so that also that
+          // row is a complete 'week'.
+    
+          while ( day_of_week_index < 7 )
+          {
+             table_element +=  "<td id=day_of_next_month>&nbsp;</td>"  ;
+             day_of_week_index  ++ ;
+          }
+    
+          table_element +=  "</tr></table>" ;
+    
+          return table_element ;
+       }
+    
+    } // END OF EnglishCalendar DECLARATIONS
+    
+    
+    // The EnglishCalendar object that we create here will show the current
+    // month, according to the computer time settings.
+    
+    var calendar_to_show = new EnglishCalendar() ;
+    
+    function show_previous_month_calendar()
+    {
+       calendar_to_show.decrement_month() ;
+    
+       var calendar_as_table = calendar_to_show.to_table_element() ;
+    
+       var div_for_calendar = document.getElementById( "calendar_div_id" ) ;
+    
+       div_for_calendar.innerHTML = calendar_as_table ;
+    }
+    
+    function show_next_month_calendar()
+    {
+       calendar_to_show.increment_month() ;
+    
+       var calendar_as_table = calendar_to_show.to_table_element() ;
+    
+       var div_for_calendar = document.getElementById( "calendar_div_id" ) ;
+    
+       div_for_calendar.innerHTML = calendar_as_table ;
+    }
+    
+    function initialize_page()
+    {
+       var calendar_as_table = calendar_to_show.to_table_element() ;
+    
+       var div_for_calendar = document.getElementById( "calendar_div_id" ) ;
+    
+       div_for_calendar.innerHTML = calendar_as_table ;
+    }
+    
+    //  The method that creates the <table> element for the calendar automatically
+    //  sets onclick="calendar_day_clicked( this )" for every day.
+    //  In this version, this function does not do anything special, but you
+    //  can see below how to find out what day was clicked.
+    
+    function calendar_day_clicked( td_element )
+    {
+       console.log( "\n " + td_element.innerHTML ) ;
+    }
+    
+    </script>
+    
+    </head>
+    
+    <body onload="initialize_page()">
+    
+       <div id="calendar_area">
+    
+          <div id="relatively_positioned_buttons">
+             <button onclick="show_previous_month_calendar()">&lt;</button>
+             <button onclick="show_next_month_calendar()">&gt;</button>
+          </div>
+    
+          <div id="calendar_div_id"><table id="calendar_as_table"><caption>September  2024</caption><tbody><tr><th>Wk</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr><tr><td id="week_number">35</td><td id="day_of_previous_month">&nbsp;</td><td id="day_of_previous_month">&nbsp;</td><td id="day_of_previous_month">&nbsp;</td><td id="day_of_previous_month">&nbsp;</td><td id="day_of_previous_month">&nbsp;</td><td id="day_of_previous_month">&nbsp;</td><td onclick="calendar_day_clicked( this )">1</td></tr><tr><td id="week_number">36</td><td onclick="calendar_day_clicked( this )">2</td><td id="current_day" onclick="calendar_day_clicked( this )">3</td><td onclick="calendar_day_clicked( this )">4</td><td onclick="calendar_day_clicked( this )">5</td><td onclick="calendar_day_clicked( this )">6</td><td onclick="calendar_day_clicked( this )">7</td><td onclick="calendar_day_clicked( this )">8</td></tr><tr><td id="week_number">37</td><td onclick="calendar_day_clicked( this )">9</td><td onclick="calendar_day_clicked( this )">10</td><td onclick="calendar_day_clicked( this )">11</td><td onclick="calendar_day_clicked( this )">12</td><td onclick="calendar_day_clicked( this )">13</td><td onclick="calendar_day_clicked( this )">14</td><td onclick="calendar_day_clicked( this )">15</td></tr><tr><td id="week_number">38</td><td onclick="calendar_day_clicked( this )">16</td><td onclick="calendar_day_clicked( this )">17</td><td onclick="calendar_day_clicked( this )">18</td><td onclick="calendar_day_clicked( this )">19</td><td onclick="calendar_day_clicked( this )">20</td><td onclick="calendar_day_clicked( this )">21</td><td onclick="calendar_day_clicked( this )">22</td></tr><tr><td id="week_number">39</td><td onclick="calendar_day_clicked( this )">23</td><td onclick="calendar_day_clicked( this )">24</td><td onclick="calendar_day_clicked( this )">25</td><td onclick="calendar_day_clicked( this )">26</td><td onclick="calendar_day_clicked( this )">27</td><td onclick="calendar_day_clicked( this )">28</td><td onclick="calendar_day_clicked( this )">29</td></tr><tr><td id="week_number">40</td><td onclick="calendar_day_clicked( this )">30</td><td id="day_of_next_month">&nbsp;</td><td id="day_of_next_month">&nbsp;</td><td id="day_of_next_month">&nbsp;</td><td id="day_of_next_month">&nbsp;</td><td id="day_of_next_month">&nbsp;</td><td id="day_of_next_month">&nbsp;</td></tr></tbody></table></div>
+    
+       </div>
+    
+     
+    </body></html>
