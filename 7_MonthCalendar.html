@@ -90,8 +90,8 @@
         }
 
         /* The <td> and <th> elements are the cells of a table. */
-        td, th
-        {
+        td,
+        th {
             text-align: center;
             padding: 12px;
         }
@@ -288,11 +288,66 @@
 
         } // END OF EnglishCalendar DECLARATIONS
 
+        class SpanishCalendar extends EnglishCalendar{
+            constructor(given_year, given_month){
+                super(given_year, given_month);
+
+                let spanish_names_of_months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                let spanish_week_description = ["Sem","Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
+                this.names_of_months = spanish_names_of_months;
+                this.week_description = spanish_week_description;
+            }
+        }
+
+        class GermanCalendar extends EnglishCalendar{
+            constructor(given_year, given_month){
+                super(given_year, given_month);
+
+                let german_names_of_months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+                let german_week_description = ["Woc", "Mon", "Die", "Mit", "Don", "Fre", "Sam", "Son"];
+                this.names_of_months = german_names_of_months;
+                this.week_description = german_week_description;
+            }
+        }
 
         // The EnglishCalendar object that we create here will show the current
         // month, according to the computer time settings.
 
         var calendar_to_show = new EnglishCalendar();
+
+        let calendar_language = "English";
+
+        function change_language() {
+            if(calendar_language == "English"){
+                calendar_to_show = new SpanishCalendar(calendar_to_show.get_year(), calendar_to_show.get_month());
+                calendar_language = "Spanish";
+            }
+            else if(calendar_language == "Spanish"){
+                calendar_to_show = new GermanCalendar(calendar_to_show.get_year(), calendar_to_show.get_month());
+                calendar_language = "German";
+            }
+            else if(calendar_language == "German"){
+                calendar_to_show = new EnglishCalendar(calendar_to_show.get_year(), calendar_to_show.get_month());
+                calendar_language = "English";
+            }
+            var div_for_calendar = document.getElementById("calendar_div_id");
+            div_for_calendar.innerHTML = calendar_to_show.to_table_element();
+            change_table_color();
+        }
+
+        function minus_one_year() {
+            calendar_to_show.decrement_year();
+            var div_for_calendar = document.getElementById("calendar_div_id");
+            div_for_calendar.innerHTML = calendar_to_show.to_table_element();
+            change_table_color();
+        }
+
+        function plus_one_year() {
+            calendar_to_show.increment_year();
+            var div_for_calendar = document.getElementById("calendar_div_id");
+            div_for_calendar.innerHTML = calendar_to_show.to_table_element();
+            change_table_color();
+        }
 
         function show_previous_month_calendar() {
             calendar_to_show.decrement_month();
@@ -332,34 +387,66 @@
         //  sets onclick="calendar_day_clicked( this )" for every day.
         //  In this version, this function does not do anything special, but you
         //  can see below how to find out what day was clicked.
+        let clicks = 0;
+        let date1;
+        let date2;
+        let chronological_distance;
 
         function calendar_day_clicked(td_element) {
             console.log("\n " + td_element.innerHTML);
+            if(clicks == 0){
+                date1 = new Date(calendar_to_show.get_year(), calendar_to_show.get_month() - 1, td_element.innerHTML);
+                document.getElementById("date_distance").innerHTML = "";
+            }
+            else if(clicks == 1){
+                date2 = new Date(calendar_to_show.get_year(), calendar_to_show.get_month() - 1, td_element.innerHTML);
+                call_distance_date_calculation(date1, date2);
+            }
+            clicks = (clicks+1)%2;
         }
 
+        function call_distance_date_calculation(date1, date2){
+            chronological_distance = date1.get_distance_to(date2);
+            document.getElementById("date_distance").innerHTML = ("\n\n Date Distance:"
+                + chronological_distance.years + " years, "
+                + chronological_distance.months + " months, and "
+                + chronological_distance.days + " days"
+                + "\n\n");
+        }
 
         function change_table_color() {
 
-            let th_color_list = ["#DA7B06", "#800000", "#008000", "#1a1aff", "#660066", "#666666"];
+            let th_color_list = ["#DA7B06", "#800000", "#008000", "#0066ff", "#660066", "#666666"];
             let td_color_list = ["#F3B708", "#ff8080", "#00cc00", "#00ccff", "#ff99ff", "#d9d9d9"];
+            let td_light_color_lis = ["#ffd9b3", "#ffcccc", "#ccffdd", "#ccffff", "#ffccff", "#e6e6e6"];
 
             let index = document.getElementById("selector_color_list").selectedIndex;
 
+
             let elem = document.getElementById("calendar_as_table");
+            elem.querySelector("caption").style.color = th_color_list[index];
+
             let thElements = elem.querySelectorAll("th");
             let tdElements = elem.querySelectorAll("td");
-            thElements.forEach(function(th) {
+            thElements.forEach(function (th) {
                 th.style.backgroundColor = th_color_list[index]; // Colore di sfondo per le celle <th>
             });
-            tdElements.forEach(function(td) {
-                td.style.backgroundColor = td_color_list[index]; // Colore di sfondo per le celle <td>
+            tdElements.forEach(function (td) {
+                // Colore di sfondo per le celle <td>
+                if (td.id == "week_number")
+                    td.style.backgroundColor = th_color_list[index];
+                else if (td.id == "day_of_previous_month" || td.id == "day_of_next_month")
+                    td.style.backgroundColor = td_light_color_lis[index];
+                else if (td.id !=  "current_day")
+                    td.style.backgroundColor = td_color_list[index];
             });
 
             let elem_arrows = document.getElementById("relatively_positioned_buttons");
-            let  btn_elems = elem_arrows.querySelectorAll("button");
-            btn_elems.forEach(function(btn){ btn.style.backgroundColor = th_color_list[index] });
-            
+            let btn_elems = elem_arrows.querySelectorAll("button");
+            btn_elems.forEach(function (btn) { btn.style.backgroundColor = th_color_list[index] });
+
         }
+
 
     </script>
 
@@ -370,8 +457,11 @@
     <div id="calendar_area">
 
         <div id="relatively_positioned_buttons">
+            <button onclick="change_language()">L</button>
             <button onclick="show_previous_month_calendar()">&lt;</button>
             <button onclick="show_next_month_calendar()">&gt;</button>
+            <button onclick="minus_one_year()">-</button>
+            <button onclick="plus_one_year()">+</button>
         </div>
 
         <div id="calendar_div_id">
@@ -389,6 +479,8 @@
                 <option>Magenta</option>
                 <option>Gray</option>
             </select>
+
+            <p id="date_distance"></p>
         </div>
 
     </div>

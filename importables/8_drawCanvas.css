@@ -1,0 +1,24 @@
+.divs1 {
+    position: absolute;
+    top: 40px;
+    left: 260px;
+    text-align: center;
+    width: 780px;
+    height: 480px;
+    background-color: antiquewhite;
+    padding: 50px;
+    margin: 20px;
+    border: dashed 15px black;
+    outline: 15px solid rebeccapurple;
+    outline-offset: 15px;
+}
+
+#oneCanvas {
+    position: relative;
+    top: 5%;
+    height: 90%;
+    width: 90%;
+    background-color: whitesmoke;
+    border: solid 2px black;
+    margin: 10px;  
+}

@@ -1,0 +1,107 @@
+<html>
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Apollo11.html © Kari Laitinen</title>
+    <!-- 
+       2016-01-28 This file was created for http://www.naturalprogramming.com/
+       2016-11-03 Last modification
+    
+       This page demonstrates the use of 'extended' Date objects.
+       A file named DateMethodsMore.js contains 'self-made' methods
+       that can be used with Date objects. For example, there is a
+       method named get_distance_to() that can be used to calculate
+       the chronological distance between two Date objects.
+    
+    -->
+
+    <style>
+        body {
+            background: DarkGray;
+        }
+
+        #centered {
+            width: 740px;
+            height: 480px;
+            margin: 64px auto;
+            /* top and bottom margins are set,
+                                    right and left margins are automatic */
+
+            font-family: monospace;
+            /* Characters will have equal widths. */
+            font-size: 150%;
+
+            background-color: LightYellow;
+            border: 1px solid black;
+        }
+
+        pre {
+            color: Blue;
+            /* Text color in <pre> element. */
+        }
+    </style>
+
+    <!-- Next we'll import a .js file that contains methods with
+         which it is possible to do interesting opeations with Date objects. -->
+
+    <script src="importables/DateMethodsMore.js"></script>
+
+</head>
+
+<body>
+
+    <div id="centered">
+
+        <script>
+
+            // Here we have JavaScript code inside an HTML <div> element.
+            // This JavaScript code is executed at the place where it is located.
+            // This generates a <pre> element, which contains pre-formatted text.
+
+            // The text of a <pre> element is displayed as it is written
+            // 'inside' the .html file. In this case, however, we use JavaScript
+            // and function document.write() to write the text.
+
+            document.write("<pre>");
+
+            // When Date objects are created, months are expressed with numbers
+            // 0, 1, 2, ... , 10, and 11
+
+            var date_of_discovery_of_america = new Date(1492, 9, 12); // October 12
+
+            var date_of_first_moon_landing = new Date(1969, 6, 20); // July 20
+
+            document.write("\n   Christopher Columbus discovered America on "
+                + date_of_discovery_of_america.to_raw_date_string() + "\n   That was a "
+                + date_of_discovery_of_america.get_day_of_week() + ".");
+
+            document.write("\n\n   Apollo 11 landed on the moon on "
+                + date_of_first_moon_landing.to_raw_date_string() + "\n   That was a "
+                + date_of_first_moon_landing.get_day_of_week() + ".");
+
+            var chronological_distance =
+                date_of_discovery_of_america.get_distance_to(date_of_first_moon_landing);
+
+            document.write("\n\n   America was discovered "
+                + chronological_distance.years + " years, "
+                + chronological_distance.months + " months, and "
+                + chronological_distance.days + " days"
+                + "\n   before the first moon landing.\n");
+
+            document.write("</pre>");
+        </script>
+        <pre>   Christopher Columbus discovered America on 1492-10-12
+       That was a Wednesday.
+    
+       Apollo 11 landed on the moon on 1969-07-20
+       That was a Sunday.
+    
+       America was discovered 476 years, 9 months, and 8 days
+       before the first moon landing.
+    </pre>
+
+    </div>
+
+</body>
+
+</html>
