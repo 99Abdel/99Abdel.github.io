@@ -49,7 +49,7 @@ function drawFullPiramid(x0, y0, L, N, ctx, step_colors) {
 
         xb = xa + L * (i + 1);
         yb = ya;
-        n_xa = xa - L * (i+1);
+        n_xa = xa - L * (i + 1);
         ctx.moveTo(n_xa, ya);
         ctx.lineTo(xb, yb);
 

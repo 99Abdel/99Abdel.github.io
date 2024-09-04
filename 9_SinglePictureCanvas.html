@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #oneCanvas{
+            position: absolute;
+            top: 20%;
+            left: 30%;
+            width: 600px;
+            height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="oneCanvas"></canvas>
+
+    <script>
+
+        function fillCanvas(img_elem){
+            let cnv = document.getElementById("oneCanvas");
+            let ctx = cnv.getContext("2d");
+            console.log(cnv.width, cnv.height);
+            let x = 20, y = 10;
+            let tol = 5; 
+            ctx.fillRect(x-tol, y-tol, cnv.width - 2*x + tol*2, cnv.height - 2*y + tol*2)
+            ctx.drawImage(img_elem, x, y, cnv.width - 2*x, cnv.height - 2*y);
+        }
+
+        let img_elem = document.createElement("img");
+        img_elem.setAttribute("src", "images/gauguin_bouquet_of_flowers.jpg");
+        img_elem.setAttribute("onload", "fillCanvas(img_elem)");
+        
+    </script>
+</body>
+
+</html>
