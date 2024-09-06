@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #mainDiv {
+            position: absolute;
+            left: 10%;
+            align-items: center;
+            text-align: center;
+            width: 80%;
+            height: 97%;
+            border-style: outset;
+            border-radius: 10px;
+            border-color: brown;
+            border-width: 5px;
+        }
+
+        #oneCanvas {
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 800px;
+            height: 600px;
+            border: 1px solid black;
+            background-color: aliceblue;
+        }
+
+        #clickedOutput {
+            position: relative;
+            top: 82%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="mainDiv">
+        <h1 id="hoverOuput">Hoovering: </h1>
+        <canvas id="oneCanvas"></canvas>
+        <h2 id="clickedOutput">Clicked: </h2>
+    </div>
+
+
+    <script src="importables/11_DrawRectanglesCanvas.js"></script>
+
+</body>
+
+</html>

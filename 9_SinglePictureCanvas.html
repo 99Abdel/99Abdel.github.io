@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        #oneCanvas{
+        #oneCanvas {
             position: absolute;
             top: 10%;
             left: 25%;
@@ -22,30 +22,43 @@
 
     <script>
 
-        function wallMortarBackground(x0, y0, xn, yn, ctx){
+        function resizeCanvasToDisplaySize(canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const scale = window.devicePixelRatio; // Ottieni il device pixel ratio
+            console.log(scale);
+            // Modifica la dimensione interna del canvas per adattarla al device pixel ratio
+            canvas.width = Math.floor(rect.width * scale);
+            canvas.height = Math.floor(rect.height * scale);
+
+            // Scala il contesto per renderizzare con maggiore risoluzione
+            const ctx = canvas.getContext("2d");
+            ctx.scale(scale, scale);
+        }
+
+        function wallMortarBackground(x0, y0, xn, yn, ctx) {
             ctx.fillStyle = "khaki";
             ctx.beginPath();
-            ctx.fillRect(x0,y0, xn-x0, yn-y0);
+            ctx.fillRect(x0, y0, xn - x0, yn - y0);
             ctx.closePath();
         }
 
-        function brickBackround(x0, y0, xn, yn, ctx){
+        function brickBackround(x0, y0, xn, yn, ctx) {
             ctx.fillStyle = "goldenrod";
-            let brick_height = 6;
-            let brick_width = 30;
+            let brick_height = 15;
+            let brick_width = 100;
             let mortar_thickness = 2;
-            let rows = Math.ceil((yn-y0)/brick_height);
-            let n_bricks_row = Math.ceil((xn-x0)/brick_width);
+            let rows = Math.ceil((yn - y0) / brick_height);
+            let n_bricks_row = Math.ceil((xn - x0) / brick_width);
             let x, y = y0;
 
             ctx.beginPath();
-            for(let i = 0; i < rows; i++){
+            for (let i = 0; i < rows; i++) {
 
-                x = (i%2 == 0) ? x0 : x0 - brick_width/2;
+                x = (i % 2 == 0) ? x0 : x0 - brick_width / 2;
 
-                for(let j =0; j<n_bricks_row; j++){
+                for (let j = 0; j < n_bricks_row; j++) {
                     ctx.fillRect(x, y, brick_width, brick_height);
-                    x += brick_width + mortar_thickness; 
+                    x += brick_width + mortar_thickness;
                 }
 
                 y += brick_height + mortar_thickness;
@@ -53,23 +66,24 @@
             ctx.closePath();
         }
 
-        function fillCanvas(img_elem, picture_enlargement = 1){
-            
-            let xa = 60 * (2 - picture_enlargement);
-            let ya = 30 * (2 - picture_enlargement);
-            let xb = cnv.width  - 2*xa;
-            let yb = cnv.height - 2*ya;
+        function fillCanvas(img_elem, picture_enlargement = 1) {
+
+            let xa = 200 * (2 - picture_enlargement);
+            let ya = 100 * (2 - picture_enlargement);
+            let rect = cnv.getBoundingClientRect();
+            let xb = rect.width - 2 * xa;
+            let yb = rect.height - 2 * ya;
             let tol = 4;
 
             ctx.fillStyle = "darkgreen";
             ctx.beginPath();
-            ctx.fillRect(xa-tol, ya-tol/2, xb + tol*2, yb + tol);
+            ctx.fillRect(xa - tol, ya - tol / 2, xb + tol * 2, yb + tol);
             ctx.drawImage(img_elem, xa, ya, xb, yb);
             ctx.closePath();
         }
-        
-        function drawAll(x0, y0, xn, yn, cnv, ctx, img, pe = 1){
-            
+
+        function drawAll(x0, y0, xn, yn, cnv, ctx, img, pe = 1) {
+
             ctx.clearRect(0, 0, cnv.width, cnv.height);
             wallMortarBackground(x0, y0, xn, yn, ctx);
             brickBackround(x0, y0, xn, yn, ctx);
@@ -78,12 +92,13 @@
         }
 
         let cnv = document.getElementById("oneCanvas");
+        resizeCanvasToDisplaySize(cnv);
         let ctx = cnv.getContext("2d");
-        let X = 0;
+        let X = 50;
         wallMortarBackground(-X, -X, cnv.width + X, cnv.height + X, ctx);
         brickBackround(-X, -X, cnv.width + X, cnv.height + X, ctx);
 
-        let images = ["images/gauguin_bouquet_of_flowers.jpg", "images/night_watch_by_rembrandt.jpg", 
+        let images = ["images/gauguin_bouquet_of_flowers.jpg", "images/night_watch_by_rembrandt.jpg",
             "images/persistence_of_memory_by_dali.jpg", "images/yellow_field_by_vincent_van_gogh.jpg"
         ];
 
@@ -91,35 +106,34 @@
         let picture_enlargement = 1.0;
         img_elem.setAttribute("src", images[0]);
         img_elem.setAttribute("onload", "fillCanvas(img_elem, picture_enlargement)");
-        
+
         let i = 0;
         // Add event listener for keydown events
-        document.addEventListener('keydown', function(event) { 
+        document.addEventListener('keydown', function (event) {
 
-            switch (event.key){
+            switch (event.key) {
 
                 case "ArrowUp":
-                    if (picture_enlargement < 2.0)
-                    {
+                    if (picture_enlargement < 2.0) {
                         picture_enlargement += 0.2;
                         drawAll(-X, -X, cnv.width + X, cnv.height + X, cnv, ctx, img_elem, picture_enlargement);
                     }
                     break;
-                
+
                 case "ArrowDown":
-                    if(picture_enlargement > 0.1){
+                    if (picture_enlargement > 0.5) {
                         picture_enlargement -= 0.2;
                         drawAll(-X, -X, cnv.width + X, cnv.height + X, cnv, ctx, img_elem, picture_enlargement);
                     }
                     break;
 
                 case "ArrowLeft":
-                    i = (i == 0) ? (images.length-1) : (i-1)%images.length;
+                    i = (i == 0) ? (images.length - 1) : (i - 1) % images.length;
                     img_elem.src = images[i];
                     break;
 
                 case "ArrowRight":
-                    i = (i + 1)%images.length;
+                    i = (i + 1) % images.length;
                     img_elem.src = images[i];
                     break;
 
@@ -127,7 +141,7 @@
 
             console.log(event.key, picture_enlargement);
         });
-        
+
     </script>
 </body>
 
