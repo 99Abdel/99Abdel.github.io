@@ -127,7 +127,7 @@ function moveBall(x, y, ctx, rect) {
         ctx.arc(balls[i].x, balls[i].y, balls[i].r, 0, 2*Math.PI);
         ctx.fill();
         ctx.stroke();
-        ctx.closePath()
+        ctx.closePath();
     }
 
 }
