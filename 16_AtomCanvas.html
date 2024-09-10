@@ -1,0 +1,316 @@
+<html>
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>AtomCanvas.html © Kari Laitinen</title>
+    <!--
+       http://www.naturalprogramming.com/
+    
+       2014-03-05 File created.
+       2016-10-22 Class NucleusParticle defined with keyword 'class'.
+       2017-02-26 Last modification.
+    
+       This program displays an 'atom' whose electrons are
+       circulating around its nucleus. As the atom has two 
+       electrons, it is a helium atom. The nucleus of the
+       atom consists of two protons and two neutrons.
+    
+       This program demonstrates the use of following things:
+          - stretching the coordinate system to draw ellipses
+          - rotating the coordinate system
+          - calculating the coordinates for points in an elliptical orbit
+          - using gradient color
+    
+    -->
+
+    <script>
+
+        //  Here we define a class named NucleusParticle.
+
+        const PARTICLE_RADIUS = 20;
+
+        class NucleusParticle {
+            constructor(given_particle_center_point_x,
+                given_particle_center_point_y,
+                given_particle_color) {
+                this.particle_center_point_x = given_particle_center_point_x;
+                this.particle_center_point_y = given_particle_center_point_y;
+
+                this.particle_color = given_particle_color;
+            }
+
+            setColor(color){
+                this.particle_color = color;
+            }
+
+            draw(given_context) {
+                given_context.save();
+
+                given_context.translate(this.particle_center_point_x, this.particle_center_point_y);
+
+                var particle_gradient_color =
+
+                    given_context.createLinearGradient(PARTICLE_RADIUS, -PARTICLE_RADIUS,
+                        -PARTICLE_RADIUS, PARTICLE_RADIUS);
+
+                particle_gradient_color.addColorStop(0, "white");
+                particle_gradient_color.addColorStop(1, this.particle_color);
+
+                given_context.fillStyle = particle_gradient_color;
+
+                given_context.beginPath();
+                given_context.arc(0, 0, PARTICLE_RADIUS, 0, 2 * Math.PI, true);
+                given_context.closePath();
+                given_context.fill();
+
+                given_context.restore();
+            }
+        }
+
+        // Here begins the 'main' program.
+
+        // The nucleus of a helium atom consists of two protons and
+        // two neutrons. The coordinates of these nucleus particles
+        // refer to their center points, the zero point being
+        // the center of the atom.
+
+        var particle_colors = ["Teal", "Purple", "Tomato", "Turquoise", "Violet",
+            "YellowGreen", "Gold", "Green", "blue"];
+
+        var upper_left_proton = new NucleusParticle(-15, -15, particle_colors[0]);
+        var lower_right_proton = new NucleusParticle(15, 15, particle_colors[0]);
+
+        var lower_left_neutron = new NucleusParticle(-15, 15, particle_colors[1]);
+        var upper_right_neutron = new NucleusParticle(15, -15, particle_colors[1]);
+
+
+        var electron_angle = 0;
+
+        // Variables for counting frames per seconds
+        var frames_per_second = 0;
+        var frames_during_last_second = 0;
+        var total_time = 0;
+        var current_time = Date.now(); // milliseconds since the year 1970
+        var previous_time = current_time;
+
+        function shuffle(given_array) {
+            var current_index = given_array.length;
+
+            // While there remain elements to shuffle...
+            while (current_index > 0) {
+                var random_index = Math.floor(Math.random() * current_index);
+
+                current_index--;
+
+                // Swap a random element with the current element.
+                var element_to_swap = given_array[current_index];
+                given_array[current_index] = given_array[random_index];
+                given_array[random_index] = element_to_swap;
+            }
+        }
+
+
+        function update_nucleus(){
+            shuffle(particle_colors);
+            upper_left_proton.setColor(particle_colors[0]);
+            lower_right_proton.setColor(particle_colors[0]);
+            upper_right_neutron.setColor(particle_colors[1]);
+            lower_left_neutron.setColor(particle_colors[1]);
+        }
+
+        // The following function is used to draw ellipses, i.e., ovals.
+        // The function stretches the coordinate system as necessary.
+
+        function stroke_oval(context,
+            given_center_point_x,
+            given_center_point_y,
+            given_width,
+            given_height) {
+            context.save();
+
+            context.translate(given_center_point_x, given_center_point_y);
+
+            var ball_radius = 0;
+
+            if (given_width > given_height) {
+                // We'll draw a horizontal oval.
+                context.scale(given_width / given_height, 1);
+                ball_radius = given_height / 2;
+            }
+            else {  // It is going to be a vertical oval.
+                context.scale(1, given_height / given_width);
+                ball_radius = given_width / 2;
+            }
+
+            context.beginPath();
+            context.arc(0, 0, ball_radius, 0, 2 * Math.PI, true)
+            context.closePath();
+            context.stroke();   //  Draw the outline of the ball.
+
+            context.restore();  //  Restore the saved drawing context.
+        }
+
+
+        function draw_on_canvas() {
+            var canvas = document.getElementById("atom_canvas");
+            var context = canvas.getContext("2d");
+
+            context.fillStyle = "rgb( 255, 200, 0 )";  // orange background color
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            // display frames per second...
+
+            context.font = "bold 12px sans-serif";
+            context.fillStyle = "black";
+            context.fillText("FRAMES PER SECOND: " + frames_per_second, 20, 20);
+
+            context.save();  //  Saving the current drawing context
+
+            // Next we'll draw the orbits for the electrons as well
+            // as the electrons themselves.
+
+            // The width and height of the elliptical orbits are
+            // 400 and 200, repectively. For such orbits we can calculate
+            // positions for the electrons with the following formulas.
+            // (400 / 2 == 200 and 200 / 2 == 100)
+
+            var electron_position_x = Math.cos(electron_angle) * oval_width / 2;
+
+            var electron_position_y = Math.sin(electron_angle) * oval_height / 2;
+
+            // Although we use the above coordinates for both electrons,
+            // they will appear in different positions on the screen as
+            // the coordinate system is rotated between drawings.
+
+            context.strokeStyle = "DimGray";  // Color for the orbit.
+
+            context.translate(canvas.width / 2, canvas.height / 2);
+
+            // first orbit and electron
+            context.rotate(Math.PI / 4);  // 45 degrees clockwise
+            stroke_oval(context, 0, 0, oval_width, oval_height); // drawing the orbit
+
+            context.fillStyle = "red"; // color for red electron
+
+            context.beginPath();
+            context.arc(electron_position_x, electron_position_y,
+                6, 0, 2 * Math.PI, true);
+            context.closePath();
+            context.fill();  // drawing an electron
+
+            // seond orbit and electron
+            context.rotate(Math.PI / 2);  // 90 degrees counter-clockwise
+            stroke_oval(context, 0, 0, oval_width, oval_height); // drawing the orbit
+
+            context.fillStyle = "blue"; // color for blue electron
+
+            context.beginPath();
+            context.arc(electron_position_x, electron_position_y,
+                6, 0, 2 * Math.PI, true);
+            context.closePath();
+            context.fill();  // drawing an electron
+
+
+            // third orbit and electron
+            context.rotate(Math.PI / 4);  // 90 degrees clockwise
+            stroke_oval(context, 0, 0, oval_width, oval_height); // drawing the orbit
+
+            context.fillStyle = "white"; // color for red electron
+
+            context.beginPath();
+            context.arc(electron_position_x, electron_position_y,
+                6, 0, 2 * Math.PI, true);
+            context.closePath();
+            context.fill();  // drawing an electron
+
+
+            // fourth orbit and electron
+            context.rotate(Math.PI / 2);  // 90 degrees clockwise
+            stroke_oval(context, 0, 0, oval_width, oval_height); // drawing the orbit
+
+            context.fillStyle = "yellow"; // color for red electron
+
+            context.beginPath();
+            context.arc(electron_position_x, electron_position_y,
+                6, 0, 2 * Math.PI, true);
+            context.closePath();
+            context.fill();  // drawing an electron
+
+            context.rotate(Math.PI / 2);
+
+            upper_left_proton.draw(context);
+            lower_left_neutron.draw(context);
+            upper_right_neutron.draw(context);
+            lower_right_proton.draw(context);
+
+            context.restore(); //  Restore the saved drawing context.
+
+            // We'll adjust the angle for the electrons for the next call 
+            // of this function.
+
+            electron_angle = electron_angle + Math.PI / 16;
+
+            if (electron_angle >= 2 * Math.PI) {
+                electron_angle = 0;
+            }
+
+            // Finally we'll count how fast frames are created, i.e.,
+            // how many times per second this function is executed.
+            // Date.now() returns the number of milliseconds elapsed since 1970-01-01
+
+            previous_time = current_time;
+            current_time = Date.now();
+            total_time += current_time - previous_time;
+
+            if (total_time > 1000) {
+                total_time -= 1000;
+                frames_per_second = frames_during_last_second;
+                frames_during_last_second = 0;
+                update_nucleus();
+            }
+
+            frames_during_last_second++;
+        }
+
+        function run_this_application() // This is the 'game loop'
+        {
+            draw_on_canvas();
+
+            setTimeout("run_this_application()", 10);
+        }
+
+        let oval_width = 400;
+        let oval_height = 120;
+    </script> <!-- End of JavaScript code. -->
+
+    <style>
+        body {
+            background-color: LightGray;
+        }
+
+        #centered {
+            width: 600px;
+            height: 500px;
+            margin: 30px auto;
+            /* top and bottom margins are 30p;
+                                   right and left margins are automatic */
+            border: 2px solid black;
+        }
+    </style> <!-- End of CSS style definitions. -->
+</head>
+
+<body onload="run_this_application()">
+
+    <div id="centered">
+        <canvas id="atom_canvas" width="600" height="500">
+        </canvas>
+    </div>
+
+
+
+
+
+
+</body>
+
+</html>

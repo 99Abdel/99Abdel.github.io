@@ -19,7 +19,7 @@ class Ball {
      * 
      * @param {boolean} given_sel 
      */
-    setSelected = function(given_sel){
+    setSelected = function (given_sel) {
         this.selected = given_sel;
     }
 
@@ -47,10 +47,10 @@ class Ball {
 
 }
 
-class MulticoloreBall extends Ball{
+class MulticoloreBall extends Ball {
 
-    constructor(x, y, r, col1, col2, col3){
-        super(x,y,r,col1);
+    constructor(x, y, r, col1, col2, col3) {
+        super(x, y, r, col1);
         this.color2 = col2;
         this.color3 = col3;
     }
@@ -103,7 +103,7 @@ function resizeCanvasToDisplaySize(canvas) {
 function checkIfInCircle(x, y) {
     let last = balls.length - 1;
     for (let i = last; i >= 0; i--) {
-        if (balls[i].isInsidePoint(x, y)){
+        if (balls[i].isInsidePoint(x, y)) {
             balls[i].selected = true;
             return i;
         }
@@ -119,12 +119,12 @@ function moveBall(x, y, ctx, rect) {
     balls[last].setY(y);
 
     ctx.clearRect(0, 0, rect.width, rect.height);
-    ctx.strokeStyle ="black";
+    ctx.strokeStyle = "black";
 
-    for(let i =0; i < balls.length; i++){
+    for (let i = 0; i < balls.length; i++) {
         ctx.beginPath();
         ctx.fillStyle = balls[i].color;
-        ctx.arc(balls[i].x, balls[i].y, balls[i].r, 0, 2*Math.PI);
+        ctx.arc(balls[i].x, balls[i].y, balls[i].r, 0, 2 * Math.PI);
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
@@ -137,7 +137,7 @@ function moveBall(x, y, ctx, rect) {
  * @param {*} array 
  * @param {int} ini initial element index if not give is 0
  */
-function partialLeftShif(array, ini = 0){
+function partialLeftShif(array, ini = 0) {
 
     let last = array.length - 1;
     let ele = array[ini];
@@ -191,11 +191,11 @@ function initialCoordinates(event) {
     is_mouse_down = true;
     ini_coords = getCoordinates.call(this, event);
     let index = checkIfInCircle(ini_coords.x, ini_coords.y);
-    if(index != null && !(is_control_pressed || is_shift_pressed)){
+    if (index != null && !(is_control_pressed || is_shift_pressed)) {
         partialLeftShif(balls, index);
         flag = 1;
     }
-    else{
+    else {
         checkCondition(event);
     }
     document.getElementById("clickedOutput").innerHTML = "IniCoord: (x,y) (" + ini_coords.x + ", " + ini_coords.y + ")";
@@ -214,48 +214,48 @@ function finalCoordinates(event) {
 }
 
 
-function readPressedButton(event){
-    if(event.key == "Control"){
+function readPressedButton(event) {
+    if (event.key == "Control") {
         is_control_pressed = true;
     }
-    else if (event.key == "Shift"){
+    else if (event.key == "Shift") {
         is_shift_pressed = true;
     }
 }
 
-function readReleasedButton(event){
-    if(event.key == "Control"){
+function readReleasedButton(event) {
+    if (event.key == "Control") {
         is_control_pressed = false;
     }
-    else if (event.key == "Shift"){
+    else if (event.key == "Shift") {
         is_shift_pressed = false;
     }
 }
 
-function checkCondition(event){
+function checkCondition(event) {
     ctx = cnv.getContext("2d");
-    if(is_control_pressed && is_mouse_down){
+    if (is_control_pressed && is_mouse_down) {
         let coor = getCoordinates(event);
-        let r = 20 + Math.random()*180;
-        if(!is_shift_pressed){
-            let col_index = Math.floor(Math.random()*(colors.length - 1));
+        let r = 20 + Math.random() * 180;
+        if (!is_shift_pressed) {
+            let col_index = Math.floor(Math.random() * (colors.length - 1));
             let ball = new Ball(coor.x, coor.y, r, colors[col_index]);
             balls.push(ball);
             drawCircle(ball.x, ball.y, ball.r, ctx, ball.color);
         }
-        else if(is_shift_pressed){
-            let one_third = Math.PI/3;
+        else if (is_shift_pressed) {
+            let one_third = Math.PI / 3;
             let a = 0
-            let b = 2*Math.PI;
-            let idx = Math.floor(Math.random()*(colors.length - 1));
+            let b = 2 * Math.PI;
+            let idx = Math.floor(Math.random() * (colors.length - 1));
             let col_index = [];
 
-            for(let i = 0; i < 3; i++){
+            for (let i = 0; i < 3; i++) {
                 drawCircle(coor.x, coor.y, r, ctx, colors[idx], a, b);
                 a += one_third;
                 b = -a;
                 col_index.push(colors[idx]);
-                idx = (idx + 1)%colors.length;
+                idx = (idx + 1) % colors.length;
             }
             let ball = new MulticoloreBall(coor.x, coor.y, r, colors[col_index[0]], colors[col_index[1]], colors[col_index[2]]);
             balls.push(ball);
