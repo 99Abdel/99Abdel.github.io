@@ -1,0 +1,335 @@
+<html>
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>GunCanvas.html © Kari Laitinen</title>
+    <!--
+       http://www.naturalprogramming.com/
+    
+       2014-02-26 File created.
+       2016-10-22 Classes defined with keyword 'class'.
+       2017-03-05 Last modification.
+    
+       This page demonstrates:
+          - simple animation and 'game loop'
+          - using JavaScript classes 
+    
+       This page displays a canvas on which there is a kind of gun.
+       A shell starts flying from the barrel of the gun
+       when the page is loaded.
+       By pressing any key of the keyboard or a mouse button,
+       you can fire the gun again.
+    -->
+
+    <script>
+
+        // Here a class named Shell is defined. A Shell is the 'thing'
+        // that flies when a gun is fired.
+
+        class Shell {
+            constructor(given_initial_position_x, given_initial_position_y, given_firing_angle_in_degrees, given_energy, given_ground_level_y) {
+                this.shell_position_x = given_initial_position_x;
+                this.shell_position_y = given_initial_position_y;
+
+                this.firing_angle_in_radians = 2 * Math.PI * given_firing_angle_in_degrees / 360;
+                this.energy = given_energy;
+                this.ground_level_y = given_ground_level_y;
+
+                this.radius = 10;
+
+                this.movement_x = (this.energy / 10.0) * Math.cos(this.firing_angle_in_radians);
+                this.movement_y = -((this.energy / 10.0) * Math.sin(this.firing_angle_in_radians));
+            }
+
+            move() {
+                // The shell will be moved until it has reached the ground level.
+
+                if (this.shell_position_y + this.radius < this.ground_level_y) {
+                    // We'll move the shell according to the values that have
+                    // been set earlier. In the beginning the movement in y-direction is
+                    // negative, which means that the shell will fly upwards.
+
+                    this.shell_position_x += this.movement_x;
+                    this.shell_position_y += this.movement_y;
+
+                    // We'll increase the movement in y-direction. This means
+                    // that in some phase the value becomes positive, and the
+                    // shell starts going downwards, and its velocity increases
+                    // gradually.
+
+                    this.movement_y += 0.3;
+                }
+
+            }
+
+            has_reached_target(){
+                return this.shell_position_y + this.radius >= this.ground_level_y;
+            }
+
+            get_shell_position_x(){
+                return this.shell_position_x;
+            }
+
+            get_shell_position_y(){
+                return this.shell_position_y;
+            }
+
+            draw(context) {
+                context.save();  //  Saving the current drawing context
+                context.fillStyle = "red";
+                context.strokeStyle = "black";
+                context.lineWidth = 1;
+
+                context.beginPath();
+                context.arc(this.shell_position_x, this.shell_position_y,
+                    this.radius, 0, 2 * Math.PI, true);
+                context.closePath();
+                context.fill();
+                context.stroke();
+
+                context.restore(); //  Restore the saved drawing context.
+            }
+        }  // The definition of class Shell ends here.
+
+        // Next we specify another class named Gun
+
+        class Gun {
+            constructor(given_position_x, given_ground_level_y, given_barrel_angle_in_degrees) {
+                this.gun_position_x = given_position_x;
+                this.gun_ground_level_y = given_ground_level_y;
+                this.gun_position_y = given_ground_level_y - 50;
+                this.barrel_angle_in_degrees = given_barrel_angle_in_degrees;
+            }
+
+            fire() {
+                // When a Gun is fired, it creates a Shell object and
+                // returns it to the caller who is responsible to flying it
+                // by calling its move() method.
+
+                var new_shell = new Shell(this.gun_position_x,
+                    this.gun_position_y,
+                    this.barrel_angle_in_degrees,
+                    150,  // energy of the shell
+                    this.gun_ground_level_y);
+
+                return new_shell;
+            }
+
+            rotate_clockwise() {
+                this.barrel_angle_in_degrees -= 5;
+            }
+
+            rotate_counter_clockwise() {
+                this.barrel_angle_in_degrees += 5;
+            }
+
+            draw(context) {
+
+                context.save();  //  Saving the current drawing context
+
+                context.translate(this.gun_position_x, this.gun_position_y);
+
+                context.fillStyle = "DarkSlateGray";
+                context.strokeStyle = "Maroon";
+                context.lineWidth = 20;
+
+                context.rotate(- (2 * Math.PI * this.barrel_angle_in_degrees / 360));
+
+                context.fillRect(-50, -15, 150, 30);
+
+                context.fillStyle = "DarkGreen";
+
+                context.beginPath();
+                context.arc(0, 0, 40, 0, 2 * Math.PI, true);
+                context.closePath();
+                context.fill();
+                context.stroke();
+
+                context.restore(); //  Restore the saved drawing context.
+            }
+        }
+
+
+        class Sprite {
+            constructor(given_sprite_image,  // An Image() object created by caller.
+                number_of_horizontal_frames,
+                given_sprite_center_point_x,   // x-position on canvas
+                given_sprite_center_point_y)  // y-position on canvas
+            {
+                this.sprite_image = given_sprite_image;
+                this.number_of_frames = number_of_horizontal_frames;
+
+                this.sprite_center_point_x = given_sprite_center_point_x;
+                this.sprite_center_point_y = given_sprite_center_point_y;
+
+                this.current_frame_index = 0;
+
+                this.frame_width = this.sprite_image.width / number_of_horizontal_frames;
+
+                this.frame_height = this.sprite_image.height;
+
+                this.sprite_is_alive = true;
+            }
+
+            sprite_has_finished() {
+                if (this.sprite_is_alive == false) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+
+            draw(context) {
+                if (this.sprite_is_alive == true) {
+                    //  You can think that the parameters below first specify an image,
+                    //  then they specify a rectangle within the image, and then they
+                    //  specify a rectangle on the canvas. Image data is copied from the
+                    //  rectangle inside the image to the rectangle on the canvas.
+
+                    context.save();  //  Saving the current drawing context
+
+                    context.drawImage(this.sprite_image,
+
+                        this.frame_width * this.current_frame_index, 0,
+                        this.frame_width, this.frame_height,
+
+                        this.sprite_center_point_x - this.frame_width / 2,
+                        this.sprite_center_point_y - this.frame_height / 2,
+                        this.frame_width, this.frame_height);
+                    
+                    context.restore(); //  Restore the saved drawing context.
+
+                    this.current_frame_index++;
+
+                    if (this.current_frame_index >= this.number_of_frames) {
+                        this.sprite_is_alive = false;
+                    }
+                }
+            }
+        }  // End of class Sprite.
+
+
+        // Here begins the 'main' program.
+
+        var GROUND_LEVEL_Y = 540;
+
+        var gun = new Gun(100, GROUND_LEVEL_Y, 60);
+
+        let explosion_frames_image = new Image() ;
+    
+        explosion_frames_image.src = "sprite_images/explosion_frames_72_87x87.png" ; 
+
+        let sprites = [];
+
+        let flying_shells = [];
+
+        flying_shells.push(gun.fire());
+
+        function on_mouse_down(event) {
+            flying_shells.push(gun.fire());
+        }
+
+        function on_key_down(event) {
+            console.log(event.key);
+            // The following statement will create a new Shell object.
+            // The old Shell object is destroyed by the carbage collector.
+            if (event.key == "ArrowUp") {
+                gun.rotate_counter_clockwise();
+            }
+            else if (event.key === "ArrowDown") {
+                gun.rotate_clockwise();
+            }
+            else if (event.which == 0x20) { // if space is pressed (i access the key pressed via number ascii with the event.which)
+                flying_shells.push(gun.fire());
+            }
+        }
+
+        function draw_on_canvas() {
+            var canvas = document.getElementById("gun_canvas");
+            var context = canvas.getContext("2d");
+
+            context.fillStyle = "LightBlue";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            context.fillStyle = "SandyBrown";
+
+            context.fillRect(0, GROUND_LEVEL_Y,
+                canvas.width, canvas.height - GROUND_LEVEL_Y);
+
+            if (flying_shells.length >= 1) {
+                for (let i = 0; i < flying_shells.length; i++) {
+                    flying_shells[i].draw(context);
+                }
+            }
+
+            if (sprites.length >= 1){
+                for (let i = 0; i < sprites.length; i++) {
+                    sprites[i].draw(context);
+                }
+            }
+
+            gun.draw(context);
+        }
+
+        function run_this_application() // This is the 'game loop'
+        {
+            // In this program flying_shell should never point to a non-existent,
+            // object, but, nevertheless, it is good to have these kinds of tests
+            // in programs.
+
+            if (flying_shells.length >= 1) {
+                for (let i = 0; i < flying_shells.length; i++) {
+                    flying_shells[i].move();
+                    if(flying_shells[i].has_reached_target()){
+                        sprites.push(new Sprite(explosion_frames_image, 72, flying_shells[i].get_shell_position_x(), flying_shells[i].get_shell_position_y()));
+                        flying_shells.splice(i,1);
+                        i--;
+                    }
+                }
+            }
+
+            if (sprites.length >= 1){
+                for (let i = 0; i < sprites.length; i++) {
+                    if(sprites[i].sprite_has_finished()){
+                        sprites.splice(i,1);
+                        i--;
+                    }
+                }
+            }
+
+            draw_on_canvas();
+
+            setTimeout("run_this_application()", 50);
+        }
+
+    </script> <!-- End of JavaScript code. -->
+
+    <style>
+        #centered {
+            width: 880px;
+            height: 600px;
+            margin: 30px auto;
+            /* top and bottom margins are 30p;
+                                   right and left margins are automatic */
+            border: 1px solid black;
+        }
+    </style> <!-- End of CSS style definitions. -->
+</head>
+
+<body onload="run_this_application()" onkeydown="on_key_down( event )" onmousedown="on_mouse_down( event )">
+
+    <div id="centered">
+        <canvas id="gun_canvas" width="880" height="600">
+        </canvas>
+    </div>
+
+
+
+
+
+
+
+</body>
+
+</html>

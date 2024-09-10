@@ -1,0 +1,211 @@
+<html><head>
+    <meta charset="ISO-8859-1">
+    <title>RandomExplosionsCanvas.html © Kari Laitinen</title>
+    <!--
+       http://www.naturalprogramming.com/
+    
+       2016-03-18 File created.
+       2016-10-22 Class Sprite defined with keyword 'class'.
+       2017-03-24 Last modification.
+    
+       This page demonstrates how we can animate explosions. The animations
+       are based on an image that contains many frames that are shown like
+       a short movie clip.
+    
+       The explosions shown on the canvas of this page are generated
+       automatically into random positions.
+    
+       The Sprite class of this page is the same as in
+       ExplosionsCanvas.html
+    
+       WARNING: A Sprite object that is created before the used sprite
+                image has finished loading will not work properly.
+                See CatAdventuresCanvas.html to find out how to ensure
+                that images are loaded.
+    -->
+    
+    <script>
+    
+    // Here a class named Sprite is defined. A Sprite is a sequence of
+    // pieces of an image. Those pieces, frames, will be drawn when the
+    // draw() method is called.
+    
+    // The second parameter for the constructor tells how many frames,
+    // pieces of an image, can be found inside the image that is given
+    // as the first parameter.
+    
+    // The image must be such that its frames are horizontally organized.
+    
+    class Sprite
+    {
+       constructor( given_sprite_image,  // An Image() object created by caller.
+                    number_of_horizontal_frames,
+                    given_sprite_center_point_x,   // x-position on canvas
+                    given_sprite_center_point_y )  // y-position on canvas
+       {
+          this.sprite_image = given_sprite_image ;
+          this.number_of_frames = number_of_horizontal_frames ;
+    
+          this.sprite_center_point_x = given_sprite_center_point_x ;
+          this.sprite_center_point_y = given_sprite_center_point_y ;
+    
+          this.current_frame_index = 0 ;
+    
+          this.frame_width = this.sprite_image.width / number_of_horizontal_frames ;
+    
+          this.frame_height = this.sprite_image.height ;
+    
+          this.sprite_is_alive = true ;
+       }
+    
+       sprite_has_finished()
+       {
+          if ( this.sprite_is_alive == false )
+          {
+             return true ;
+          }
+          else
+          {
+             return false ;
+          }
+       }
+    
+       draw( context )
+       {
+          if ( this.sprite_is_alive == true )
+          {
+             //  You can think that the parameters below first specify an image,
+             //  then they specify a rectangle within the image, and then they
+             //  specify a rectangle on the canvas. Image data is copied from the
+             //  rectangle inside the image to the rectangle on the canvas.
+    
+             context.drawImage( this.sprite_image,
+    
+                                this.frame_width * this.current_frame_index, 0,
+                                this.frame_width, this.frame_height,
+    
+                                this.sprite_center_point_x - this.frame_width / 2,
+                                this.sprite_center_point_y - this.frame_height / 2,
+                                this.frame_width, this.frame_height ) ;
+    
+             this.current_frame_index ++ ;
+    
+             if ( this.current_frame_index >= this.number_of_frames )
+             {
+                this.sprite_is_alive = false ;
+             }
+          }
+       }
+    }  // End of class Sprite.
+    
+    // Here begins the 'main' program.
+    
+    var explosion_frames_image = new Image() ;
+    
+    explosion_frames_image.src = "sprite_images/explosion_frames_72_87x87.png" ;  
+    
+    var explosions_to_show = [] ;
+    
+    function create_random_explosions( number_of_explosions_to_create )
+    {
+       for ( var explosion_counter = 0 ;
+                 explosion_counter < number_of_explosions_to_create ;
+                 explosion_counter ++ )
+       {
+          var random_explosion_position_x = Math.random() * 880 ;
+          var random_explosion_position_y = Math.random() * 600 ;
+    
+    
+          var new_explosion = new Sprite( explosion_frames_image,
+                                          72,
+                                          random_explosion_position_x,
+                                          random_explosion_position_y ) ;
+    
+          explosions_to_show.push( new_explosion ) ;
+       }
+    }
+    
+    function draw_on_canvas()
+    {
+       var canvas = document.getElementById( "explosions_canvas" ) ;
+       var context = canvas.getContext( "2d" ) ;
+    
+       context.fillStyle = "DarkSlateGray" ;
+       context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+    
+       for ( var explosion_index = 0 ;
+                 explosion_index < explosions_to_show.length ;
+                 explosion_index ++ )
+       {
+          explosions_to_show[ explosion_index ].draw( context ) ;
+       }
+    }
+    
+    function run_this_application() // This is the 'game loop'
+    {
+       // We'll check all the explosions if their sprites have finished 
+       // their animation.
+    
+       var explosion_index = 0 ;
+    
+       while ( explosion_index < explosions_to_show.length )
+       {
+          if ( explosions_to_show[ explosion_index ].sprite_has_finished() )
+          {
+             // With the splice() method we remove an object from the array.
+    
+             explosions_to_show.splice( explosion_index, 1 ) ;
+          }
+          else
+          {
+             explosion_index ++ ;
+          }
+       }
+    
+       //console.log( " " + explosions_to_show.length ) ;
+    
+       // We'll create a number of explosions each time
+       // this game loop is executed. This means in practice
+       // hundreds of explosions on the screen.
+       // The number of active explosions is restricted, however.
+    
+       if ( explosions_to_show.length < 300 )
+       {
+          create_random_explosions( 4 ) ;
+       }
+    
+       draw_on_canvas() ;
+    
+       setTimeout( "run_this_application()", 50 ) ;
+    }
+    
+    </script> <!-- End of JavaScript code. -->
+    
+    <style>
+    
+       body
+       {
+          background-color: LightGray ;
+       }
+    
+       #centered
+       {
+          width:  880px;
+          height: 600px;
+          margin: 30px auto;    /* top and bottom margins are 30p;
+                                   right and left margins are automatic */
+          border: 6px solid black;
+       }
+    
+    </style>  <!-- End of CSS style definitions. -->
+    </head>
+    
+    <body onload="run_this_application()">
+    
+       <div id="centered">
+          <canvas id="explosions_canvas" width="880" height="600">
+          </canvas>
+       </div>
+    
+    
+    </body></html>

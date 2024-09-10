@@ -1,0 +1,47 @@
+<html>
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>AnimationDemoCanvas.html © Kari Laitinen</title>
+
+    <!--   http://www.naturalprogramming.com/
+    
+       2012-02-29 File created.
+       2014-02-06 Last modification.
+    
+        This example demonstrates how animation can be created.
+        'Animation' in this program means that there is a blinking
+        ball on the screen.
+    
+        More information at:
+          http://www.w3schools.com/js/js_timing.asp
+    
+        There are notes at the end of this file.
+    
+    -->
+
+    <script type="text/javascript" src="importables/14_Balls.js"></script>
+
+    <style type="text/css">
+        #centered {
+            width: 600px;
+            height: 500px;
+            margin: 30px auto;
+            /* top and bottom margins are 30p;
+                                   right and left margins are automatic */
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body onload="draw_on_canvas()">
+
+    <div id="centered">
+        <canvas id="animation_demo_canvas" width="600" height="500">
+        </canvas>
+
+    </div>
+
+</body>
+
+</html>
