@@ -1,0 +1,18 @@
+body {
+	height: 100vh;
+	margin: 0;
+	display: grid;
+	place-items: center;
+	background: rgb(255, 255, 255);
+	background: radial-gradient(circle,	rgba(255, 255, 255, 1) 0%,	rgba(58, 71, 240, 1) 100%);
+}
+
+.rps {
+	font-size: 8rem;
+	margin: auto;
+	font-variant-emoji: text;
+}
+
+.hidden{
+    display: none;
+}
