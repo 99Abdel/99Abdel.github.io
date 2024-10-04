@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup Cloud Example</title>
+    <style>
+        /* Popup cloud window */
+        .popup {
+            display: none;
+            position: absolute;
+            left: 100px; /* Adjust this to position the popup relative to the button */
+            top: 50px;
+            background-color: white;
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            z-index: 1000;
+            width: 200px;
+        }
+
+        /* Cloud-like appearance with border-radius */
+        .popup:before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 30px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid white;
+        }
+
+        /* Close button inside popup */
+        .close-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="popupButton">Click me</button>
+
+    
+
+    <script>
+        // Get elements
+        const popupButton = document.getElementById('popupButton');
+        const popup = document.getElementById('popup');
+        const closePopup = document.getElementById('closePopup');
+
+        // Show popup near the button when clicked
+        popupButton.addEventListener('click', (e) => {
+            const rect = popupButton.getBoundingClientRect();
+            popup.style.left = `${rect.left + window.scrollX}px`;
+            popup.style.top = `${rect.bottom + window.scrollY + 10}px`; // Position below the button
+            popup.style.display = 'block';
+        });
+
+        // Close popup when close button is clicked
+        closePopup.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+    </script>
+
+</body>
+</html>

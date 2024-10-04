@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <link rel="stylesheet" href="importables/18_rock_paper.css">
+
+    <!-- main page section -->
+    <div id="help_div" class="main_page_divs">
+        <button id="help_button" class="initial_buttons">
+            ?
+        </button>
+
+        <div class="popup" id="help_popup">
+            <span style="font-size: large; font-family: Arial, Helvetica, sans-serif;">
+                These are the rules: <br>
+                <ul>
+                    <li>Click an icon to select which move you want to do. </li> 
+                    <li>ROCK beats S </li> 
+                    <li>S beats PAPER </li> 
+                    <li>PAPER beats ROCK </li> 
+                    <li>Every beat gives you 1 point.  </li> 
+                    <li>Wins the one who arrives first to the set number of points (default: 3) </li>
+                </ul>
+            </span>
+            <button class="initial_buttons" id="close_popup">Close</button>
+        </div>
+    </div>
+
+    <div id="main_div" class="main_page_divs">
+        <h1 id="title">
+            Welcome to ROCK-PAPER-SCISSOR !!
+        </h1>
+        <button id="start_button" class="initial_buttons">
+            START!
+        </button>
+    </div>
+
+    <!-- setup page section -->
+
+    <div class="setup_divs" id="mode_div">
+        <label for="name_box" style="font-size: 20px; font-family: Arial, Helvetica, sans-serif;">Insert your name: </label>
+        <input type="text" id="name_box" required style="font-size: 20px;" title="Player_name">
+        <br>
+        <button class="initial_buttons" id="start_game_button">Start Game</button>
+    </div>
+
+    <!-- game page section -->
+    <div id="pc" class="game_page_divs" style="border: solid black;">
+        <span id="pc_move" class="rps_pc">✊</span>
+    </div>
+
+    <div id="human" class="game_page_divs">
+        <span id="r" class="rps">✊</span>
+        <span id="p" class="rps">✋</span>
+        <span id="s" class="rps">✌️</span>
+        <p class="hidden">You Win!</p>
+    </div>
+
+    <div id="exit_game_button" class="game_page_divs">
+        <button class="initial_buttons">EXIT</button>
+    </div>
+
+    <!-- end game page section -->
+
+    <script src="importables/18_rock_paper.js"></script>
+</body>
+
+</html>

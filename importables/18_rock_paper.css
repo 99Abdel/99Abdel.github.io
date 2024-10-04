@@ -1,0 +1,173 @@
+body {
+    height: 100vh;
+    margin: 0;
+    display: grid;
+    place-items: center;
+    background-color: rgb(255, 255, 255);
+    background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(58, 71, 240, 1) 100%);
+    z-index: 0;
+}
+
+/*-------------------------------------------------*/
+/*------------------ MAIN PAGE CSS ----------------*/
+/*-------------------------------------------------*/
+
+div.main_page_divs, div.setup_divs{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+#help_div{
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}
+
+/* Popup cloud window */
+#help_popup {
+    display: none;
+    position: relative;
+    right: 1vmin; /* Adjust this to position the popup relative to the button */
+    top: 12vmin;
+    background-color: rgb(255, 221, 32);
+    border: green solid 3px;
+    padding: 5vmin;
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.6);/* dark around it */
+    border-radius: 15px;
+    z-index: 10;
+    pointer-events: auto; /* Enable interactions inside the popup */
+}
+
+
+/* Cloud-like appearance with border-radius */
+.popup:before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 30px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid  rgb(255, 221, 32);
+}
+
+#main_div {
+    position: absolute;
+    top: 40%;
+}
+
+#title{
+    font-family: Arial, Helvetica, sans-serif;
+    color: darkslategray;
+    font-size: 7vmin;
+}
+
+.initial_buttons {
+    background-color: bisque;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 5vmin;
+    font-weight: bold;
+    border-radius: 3vmin;
+}
+
+#help_button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10vmin;
+    height: 10vmin;
+}
+
+#start_button{
+    width: 20vmin;
+    height: 10vmin;
+}
+
+#close_popup{
+    position: absolute;
+    left: 2vmin;
+    bottom: 1vmin;
+    width: 15vmin;
+    height: 5vmin;
+    font-size: 3vmin;
+}
+
+.initial_buttons:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+
+/*-------------------------------------------------*/
+/*-------------- SETUP GAME PAGE CSS --------------*/
+/*-------------------------------------------------*/
+
+div.setup_divs{
+    display: none;
+}
+
+
+
+/*-------------------------------------------------*/
+/*----------------- GAME PAGE CSS -----------------*/
+/*-------------------------------------------------*/
+
+.rps, .rps_pc {
+    position: relative;
+    font-size: 8rem;
+    margin: auto;
+    font-variant-emoji: text;
+}
+
+.rps:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+#human {
+    position: relative;
+    top: 10%;
+}
+
+#pc{
+    position: relative;
+    top: -8vmin;
+}
+
+#pc_move{
+    transform: rotate(180deg);
+}
+
+#exit_game_button{
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    height: 10vmin;
+}
+
+
+/*-------------------------------------------------*/
+/*--------------- END GAME PAGE CSS ---------------*/
+/*-------------------------------------------------*/
+
+
+#PP{
+    font: fallback;
+}
+
+#I{
+    background-color: aliceblue;
+}
+
+
+
+/*-------------- COMMON CSS --------------*/
+.hidden {
+    display: none;
+}
